@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python colaboradadosbot.py
+python main.py

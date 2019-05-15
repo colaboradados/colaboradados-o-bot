@@ -6,4 +6,8 @@ requests>=2.20.0
 requests-oauthlib==1.2.0
 tweepy==3.7.0
 python-dotenv==0.10.1
+<<<<<<< HEAD
 dependency-injector==3.14.6
+=======
+gspread==3.1.0
+>>>>>>> f/classes
