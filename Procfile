@@ -1,1 +1,1 @@
-worker: python colaboradadosbot.py
+worker: python main.py
