@@ -87,4 +87,4 @@ if __name__ == '__main__':
     # executa analise a cada 300ms
     while True:
         colaborabot.busca_disponibilidade_sites()
-        sleep(300)
+        sleep(600)

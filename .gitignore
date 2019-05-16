@@ -2,7 +2,7 @@
 .vscode
 .idea
 logs/
-/__pycache__
+__pycache__/
 credenciais/colaborabot-gAPI.json
 credenciais/.env
 
