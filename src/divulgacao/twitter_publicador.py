@@ -17,7 +17,7 @@ class TwitterPublicador(object):
         except Exception as e:
             raise e
 
-    def criar_tweet(publicacao):
+    def criar_tweet(self, publicacao):
         """
         Criando o tweet com o status do site recém acessado
         """
@@ -26,7 +26,7 @@ class TwitterPublicador(object):
         else:
             print(f'twitter desativado.')
 
-    def __twitter_auth():
+    def __twitter_auth(self):
         consumer_key = self.consumer_key
         consumer_secret = self.consumer_secret
         access_token = self.access_token

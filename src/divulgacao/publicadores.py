@@ -14,7 +14,7 @@ class Publicadores(object):
         except Exception as e:
             raise e
     
-    def criar_publicacao(url, orgao):
+    def criar_publicacao(self, url, orgao):
         publicacao = self.__lista_frases(url=url, orgao=orgao)
 
         print(f'Publicação para ser postada: {publicacao}')
@@ -24,7 +24,7 @@ class Publicadores(object):
         print(f'publicações efetuadas.')
 
 
-    def __lista_frases(url, orgao):
+    def __lista_frases(self, url, orgao):
         com_orgao = [
             f"🤖 O portal com dados públicos {url} do órgão {orgao} parece não estar funcionando. Poderia me ajudar a checar?",
             f"🤖 Hum, parece que o site {url}, mantido pelo órgão {orgao}, está apresentando erro. Poderia dar uma olhadinha?",

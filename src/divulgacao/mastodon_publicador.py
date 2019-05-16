@@ -13,7 +13,7 @@ class MastodonPublicador(object):
         except Exception as e:
             raise e
 
-    def criar_toot(publicacao, url):
+    def criar_toot(self, publicacao, url):
         """
         Recupera os 10 últimos toots da conta do Mastodon.
         Caso a URL não esteja entre as últimas notificadas, é feita a postagem.
@@ -32,9 +32,9 @@ class MastodonPublicador(object):
         else:
             print(f'mastodonte desativado')
     
-    def __masto_auth():
+    def __masto_auth(self):
         mastodon = Mastodon(
-            access_token=settings.mastodon_key,
+            access_token=self.mastodon_key,
             api_base_url='https://botsin.space'
         )
         return mastodon

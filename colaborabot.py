@@ -8,8 +8,7 @@ import csv
 
 from pathlib import Path
 from requests import get, exceptions
-from autenticadores import masto_auth
-from src.divulgacao.publicadores import Publicadores
+
 
 
 class Colaborabot(object):
@@ -29,7 +28,7 @@ class Colaborabot(object):
         except Exception as e:
             raise e
 
-    def busca_disponibilidade_sites():
+    def busca_disponibilidade_sites(self):
         """
         Percorrendo a lista de sites para verificar
         a sua disponibilidade. Caso o código de status
@@ -67,7 +66,7 @@ class Colaborabot(object):
                     self.publicadores.criar_publicacao(url=url, orgao=orgao)
                     break
     
-    def __cria_dados(url, portal, resposta):
+    def __cria_dados(self, url, portal, resposta):
         """
         Captura as informações de hora e data da máquina, endereço da página e
         resposta recebida e as prepara dentro de uma lista para inserir na tabela.
@@ -78,7 +77,7 @@ class Colaborabot(object):
         dados = [momento, momento_utc, url, portal, resposta]
         return dados
 
-    def __preenche_csv(arquivo_logs, dados):
+    def __preenche_csv(self, arquivo_logs, dados):
         """
         Guarda as ultimas interaçõs do bot no arquivo csv previamente criado.
         As informações introduzidas são aquelas geradas pela função "cria_dados"
@@ -88,7 +87,7 @@ class Colaborabot(object):
             escreve_log = csv.writer(log_csv)
             escreve_log.writerow(dados)
 
-    def __preenche_tab_gs(planilha, dados):
+    def __preenche_tab_gs(self, planilha, dados):
         """
         Escrevendo na planilha
         """
@@ -96,7 +95,7 @@ class Colaborabot(object):
         planilha = tabela.get_worksheet(index=0)
         planilha.append_row(values=dados)
 
-    def __carregar_dados_site():
+    def __carregar_dados_site(self):
         """
         Abrindo a lista de portais da transparência e tratando
         informações que serão tratados como NaN para o pandas.
