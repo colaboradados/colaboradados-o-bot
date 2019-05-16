@@ -1,30 +1,9 @@
+
 from authlib.client import AssertionSession
-from mastodon import Mastodon
-from credenciais import settings
-import tweepy
 import json
 
 
-def masto_auth():
-    mastodon = Mastodon(
-        access_token=settings.mastodon_key,
-        api_base_url='https://botsin.space'
-    )
-    return mastodon
 
-
-def twitter_auth():
-    consumer_key = settings.consumer_key
-    consumer_secret = settings.consumer_secret
-    access_token = settings.access_token
-    access_token_secret = settings.access_token_secret
-
-    # App no Twitter
-
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    bot = tweepy.API(auth)
-    return bot
 
 
 def google_api_auth(arqv_json='credenciais/colaborabot-gAPI.json', subject=None):
@@ -57,8 +36,3 @@ def google_api_auth(arqv_json='credenciais/colaborabot-gAPI.json', subject=None)
         key=key,
         header=header,
     )
-
-
-def id_mastodon():
-    id_perfil = settings.mastodon_profile_id
-    return id_perfil

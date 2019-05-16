@@ -7,11 +7,9 @@ import json
 import csv
 
 from pathlib import Path
-from time import sleep
 from requests import get, exceptions
-
-from divulga import lista_frases, checar_timelines, google_sshet
-from autenticadores import twitter_auth, google_api_auth, masto_auth
+from autenticadores import masto_auth
+from src.divulgacao.publicadores import Publicadores
 
 
 class Colaborabot(object):
@@ -25,8 +23,11 @@ class Colaborabot(object):
     TOTAL_TENTATIVAS = 10
     STATUS_SUCESSO = 200
 
-    def __init(self):
-        print("class colaborabot")
+    def __init(self, publicadores: Publicadores):
+        try:
+            self.publicadores = publicadores
+        except Exception as e:
+            raise e
 
     def busca_disponibilidade_sites():
         """
@@ -47,23 +48,23 @@ class Colaborabot(object):
                     momento = datetime.datetime.now().isoformat(sep=' ', timespec='seconds')
                     resposta = get(row['url'], timeout=30, headers=headers)
                     dados = self.__cria_dados(url=url, portal=orgao, resposta=resposta.status_code)
-                    preenche_csv(arquivo_logs=arq_log, dados=dados)
+                    self.__preenche_csv(arquivo_logs=arq_log, dados=dados)
                     if resposta.status_code == STATUS_SUCESSO:
                         print(f'{momento}; O site {url} funcionou corretamente.')
                         break
                     else:
                         if tentativa == TOTAL_TENTATIVAS:
                             self.__preenche_tab_gs(planilha=planilha_google, dados=dados)
-                            self.preenche_csv(arquivo_logs=arq_log, dados=dados)
+                            self.__preenche_csv(arquivo_logs=arq_log, dados=dados)
                             print(f"""{momento}; url: {url}; orgão: {orgao}; resposta: {resposta.status_code}""")
-                            checar_timelines(mastodon_handler=mastodon_bot, url=url, orgao=orgao)
+                            self.publicadores.criar_publicacao(url=url, orgao=orgao)
 
                 except (exceptions.ConnectionError, exceptions.Timeout, exceptions.TooManyRedirects) as e:
                     dados = self.__cria_dados(url=url, portal=orgao, resposta=str(e))
                     self.__preenche_tab_gs(planilha=planilha_google, dados=dados)
-                    self.preenche_csv(arquivo_logs=arq_log, dados=dados)
+                    self.__preenche_csv(arquivo_logs=arq_log, dados=dados)
                     print(f"""{momento}; url: {url}; orgão: {orgao}; resposta:{str(e)}""")
-                    checar_timelines(mastodon_handler=mastodon_bot, url=url, orgao=orgao)
+                    self.publicadores.criar_publicacao(url=url, orgao=orgao)
                     break
     
     def __cria_dados(url, portal, resposta):

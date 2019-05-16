@@ -1,4 +1,6 @@
 
+from time import sleep
+
 from colaborabot import Colaborabot
 
 # não é utilizado??
@@ -69,13 +71,10 @@ if __name__ == '__main__':
     colaborabot = Colaborabot()
 
     # Criando publicadores
-    # responsabilidade do colaborabot
-    mastodon_bot = masto_auth()
-    twitter_bot = twitter_auth()
+    # responsabilidade do publicador dentro do colaborabot
+    # mastodon_bot = masto_auth()
+    # twitter_bot = twitter_auth()
 
-    # google api autenticação
-    google_creds = google_api_auth() #NAO é utilizado
-    
     # utilizado para acessar uma tabela
     google_drive_creds = google_sshet()
 
