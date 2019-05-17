@@ -8,6 +8,7 @@ import csv
 
 from pathlib import Path
 from requests import get, exceptions
+from src.google.google_sheet import GoogleSheet
 
 
 
@@ -19,12 +20,17 @@ class Colaborabot(object):
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
     }
 
+    DIA = datetime.datetime.now().day
+    MES = datetime.datetime.now().month
+    ANO = datetime.datetime.now().year
+
     TOTAL_TENTATIVAS = 10
     STATUS_SUCESSO = 200
 
     def __init(self, publicadores: Publicadores):
         try:
             self.publicadores = publicadores
+            self.google_sheet = GoogleSheet(DIA, MES, ANO)
         except Exception as e:
             raise e
 
@@ -53,14 +59,14 @@ class Colaborabot(object):
                         break
                     else:
                         if tentativa == TOTAL_TENTATIVAS:
-                            self.__preenche_tab_gs(planilha=planilha_google, dados=dados)
+                            self.google_sheet.preenche_tab_gs(dados=dados)
                             self.__preenche_csv(arquivo_logs=arq_log, dados=dados)
                             print(f"""{momento}; url: {url}; orgão: {orgao}; resposta: {resposta.status_code}""")
                             self.publicadores.criar_publicacao(url=url, orgao=orgao)
 
                 except (exceptions.ConnectionError, exceptions.Timeout, exceptions.TooManyRedirects) as e:
                     dados = self.__cria_dados(url=url, portal=orgao, resposta=str(e))
-                    self.__preenche_tab_gs(planilha=planilha_google, dados=dados)
+                    self.google_sheet.preenche_tab_gs(dados=dados)
                     self.__preenche_csv(arquivo_logs=arq_log, dados=dados)
                     print(f"""{momento}; url: {url}; orgão: {orgao}; resposta:{str(e)}""")
                     self.publicadores.criar_publicacao(url=url, orgao=orgao)
@@ -86,14 +92,6 @@ class Colaborabot(object):
         with open(arq_log, 'a', newline='', encoding='UTF8') as log_csv:
             escreve_log = csv.writer(log_csv)
             escreve_log.writerow(dados)
-
-    def __preenche_tab_gs(self, planilha, dados):
-        """
-        Escrevendo na planilha
-        """
-        tabela = google_drive_creds.open(planilha.title)
-        planilha = tabela.get_worksheet(index=0)
-        planilha.append_row(values=dados)
 
     def __carregar_dados_site(self):
         """
