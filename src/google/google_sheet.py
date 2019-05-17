@@ -5,7 +5,7 @@ import json
 
 class GoogleSheet(object): 
 
-	def __init__(self, dia, mes, ano):
+	def __init__(self, dia: int, mes: int, ano: int):
 		try:
 			self.google_api_session = self.__google_api_auth()
 			self.google_spread_client = self.__google_sshet() # antigo google_drive_creds
