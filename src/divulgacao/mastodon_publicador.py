@@ -2,9 +2,9 @@ from mastodon import Mastodon
 
 class MastodonPublicador(object):
 
-    def __init__(self, settings):
+    def __init__(self):
         try:
-            #TODO: criar configuracao
+            #TODO: recuperar settings e criar configuracao
             self.active = settings.mastodon_active
             self.mastodon_key = settings.mastodon_key
 

@@ -9,6 +9,7 @@ import csv
 from pathlib import Path
 from requests import get, exceptions
 from src.google.google_sheet import GoogleSheet
+from src.divulgacao.publicadores import Publicadores
 
 
 
@@ -27,9 +28,9 @@ class Colaborabot(object):
     TOTAL_TENTATIVAS = 10
     STATUS_SUCESSO = 200
 
-    def __init(self, publicadores: Publicadores):
+    def __init(self):
         try:
-            self.publicadores = publicadores
+            self.publicadores = Publicadores()
             self.google_sheet = GoogleSheet(DIA, MES, ANO)
         except Exception as e:
             raise e
