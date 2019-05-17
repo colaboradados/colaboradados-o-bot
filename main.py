@@ -1,6 +1,8 @@
 
 from time import sleep
-from colaborabot import Colaborabot
+from src.colaborabot import Colaborabot
+
+
 
 
 if __name__ == '__main__':

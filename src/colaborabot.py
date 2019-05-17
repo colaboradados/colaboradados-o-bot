@@ -8,9 +8,9 @@ import csv
 
 from pathlib import Path
 from requests import get, exceptions
-from src.google.google_sheet import GoogleSheet
-from src.divulgacao.publicadores import Publicadores
-from src.local.logger_csv import LoggerCsv
+from google.google_sheet import GoogleSheet
+from divulgacao.publicadores import Publicadores
+from local.logger_csv import LoggerCsv
 
 
 
