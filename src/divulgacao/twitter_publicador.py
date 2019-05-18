@@ -1,11 +1,10 @@
 
 import tweepy
 
-class TwitterPublicador(object):
+class TwitterPublicador:
     
-    def __init__(self):
+    def __init__(self, settings):
         try:
-            #TODO: recuperar settings e criar configuracao e modificar configuracoes do twitter
             self.active = settings.twitter_active
             self.consumer_key = settings.consumer_key
             self.consumer_secret = settings.consumer_secret

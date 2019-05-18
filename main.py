@@ -1,13 +1,13 @@
 
 from time import sleep
 from src.colaborabot import Colaborabot
-
+from credenciais.settings import Settings
 
 
 
 if __name__ == '__main__':
     #criando bot
-    colaborabot = Colaborabot()
+    colaborabot = Colaborabot(Settings)
 
     # executa analise a cada 600ms
     while True:

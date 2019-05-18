@@ -3,7 +3,7 @@ from time import sleep
 import gspread
 import json
 
-class GoogleSheet(object): 
+class GoogleSheet: 
 
 	def __init__(self, dia: int, mes: int, ano: int):
 		try:

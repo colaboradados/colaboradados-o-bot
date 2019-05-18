@@ -3,15 +3,15 @@ from random import choice
 from twitter_publicador import TwitterPublicador
 from mastodon_publicador import MastodonPublicador
 
-class Publicadores(object):
+class Publicadores:
     """
     publicadores é a classe responsavel por publicar em todas as redes de divulgacao. Ex: twitter, mastodon, etc.
     """
     
-    def __init__(self)
+    def __init__(self, settings)
         try:
-            self.twitter_publicador = TwitterPublicador()
-            self.mastodon_publicador = MastodonPublicador()
+            self.twitter_publicador = TwitterPublicador(settings)
+            self.mastodon_publicador = MastodonPublicador(settings)
         except Exception as e:
             raise e
     

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-class LoggerCsv(object):
+class LoggerCsv:
 
     def __init__(self, dia: int, mes: int, ano: int):
         self.dia = dia

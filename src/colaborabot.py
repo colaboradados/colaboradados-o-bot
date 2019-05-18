@@ -14,7 +14,7 @@ from local.logger_csv import LoggerCsv
 
 
 
-class Colaborabot(object):
+class Colaborabot:
 
     # Parametros de acesso das urls
 
@@ -30,9 +30,9 @@ class Colaborabot(object):
     TOTAL_TENTATIVAS = 10
     STATUS_SUCESSO = 200
 
-    def __init(self):
+    def __init(self, settings):
         try:
-            self.publicadores = Publicadores()
+            self.publicadores = Publicadores(settings)
             self.google_sheet = GoogleSheet(DIA, MES, ANO)
             self.logger = LoggerCsv(DIA, MES, ANO)
         except Exception as e:
