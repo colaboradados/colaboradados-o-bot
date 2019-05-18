@@ -28,6 +28,7 @@ class MastodonPublicador:
                         for toot in urls_postadas)
             if not contem:
                 self.mastodon_bot.toot(publicacao)
+                print("toot postado!")
         else:
             print(f'mastodonte desativado')
     

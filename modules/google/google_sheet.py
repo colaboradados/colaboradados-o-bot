@@ -1,7 +1,9 @@
-from authlib.client import AssertionSession
-from time import sleep
 import gspread
 import json
+
+from pathlib import Path
+from authlib.client import AssertionSession
+from time import sleep
 
 class GoogleSheet: 
 
@@ -14,14 +16,15 @@ class GoogleSheet:
 			raise e
 
 	def preenche_tab_gs(self, dados):
-        """
-        Escrevendo na planilha
-        """
-        tabela = self.google_spread_client.open(self.planilha_google.title)
-        planilha = tabela.get_worksheet(index=0)
-        planilha.append_row(values=dados)
+		"""
+		Escrevendo na planilha
+		"""
+		if self.google_spread_client is not None:
+			tabela = self.google_spread_client.open(self.planilha_google.title)
+			planilha = tabela.get_worksheet(index=0)
+			planilha.append_row(values=dados)
 
-	def __plan_gs(dia, mes, ano):
+	def __plan_gs(self, dia, mes, ano):
 		"""
 		Cria planilha no Google Drive, envia por e-mail e preenche o cabeçalho (data e hora no fuso horário de Brasília,
 		data e hora no UTC, url afetada, órgão responsável e código de resposta do acesso).
@@ -65,15 +68,15 @@ class GoogleSheet:
 		"""
 		Função simples para retornar um objeto capaz de manipular as planilhas do Google Sheets.
 		"""
-		if self.__google_api_auth is not None:
-			ggle_cred = gspread.Client(None, self.__google_api_auth)
+		if self.google_api_session is not None:
+			ggle_cred = gspread.Client(None, self.google_api_session)
 			return ggle_cred
 		else:
 			return None
 
-	def __google_api_auth(self, arqv_json='../../credenciais/colaborabot-gAPI.json', subject=None):
+	def __google_api_auth(self, arqv_json='credenciais/colaborabot-gAPI.json', subject=None):
 		file = Path(arqv_json)
-		
+
 		if file.is_file():
 			with open(arqv_json, 'r') as f:
 				conf = json.load(f)
@@ -106,4 +109,5 @@ class GoogleSheet:
 			)
 		else:
 			print(f"arquivo não existe: '{arqv_json}'")
+			print(f"conexao com googlesheets sera ignorada...")
 			return None

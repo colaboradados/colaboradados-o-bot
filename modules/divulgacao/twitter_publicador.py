@@ -22,6 +22,7 @@ class TwitterPublicador:
         """
         if self.active == True:
             self.twitter_bot.update_status(publicacao)
+            print("tweet postado!")
         else:
             print(f'twitter desativado.')
 

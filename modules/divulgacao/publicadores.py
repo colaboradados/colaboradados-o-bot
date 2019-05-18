@@ -1,14 +1,14 @@
 from random import choice
 
-from twitter_publicador import TwitterPublicador
-from mastodon_publicador import MastodonPublicador
+from modules.divulgacao.twitter_publicador import TwitterPublicador
+from modules.divulgacao.mastodon_publicador import MastodonPublicador
 
 class Publicadores:
     """
     publicadores é a classe responsavel por publicar em todas as redes de divulgacao. Ex: twitter, mastodon, etc.
     """
     
-    def __init__(self, settings)
+    def __init__(self, settings):
         try:
             self.twitter_publicador = TwitterPublicador(settings)
             self.mastodon_publicador = MastodonPublicador(settings)
@@ -18,11 +18,10 @@ class Publicadores:
     def criar_publicacao(self, url, orgao):
         publicacao = self.__lista_frases(url=url, orgao=orgao)
 
-        print(f'Publicação para ser postada: {publicacao}')
+        print(f'Publicando: {publicacao}')
 
         self.twitter_publicador.criar_tweet(publicacao)
         self.mastodon_publicador.criar_toot(publicacao, url)
-        print(f'publicações efetuadas.')
 
 
     def __lista_frases(self, url, orgao):

@@ -8,10 +8,9 @@ import csv
 
 from pathlib import Path
 from requests import get, exceptions
-from google.google_sheet import GoogleSheet
-from divulgacao.publicadores import Publicadores
-from local.logger_csv import LoggerCsv
-
+from modules.google.google_sheet import GoogleSheet
+from modules.divulgacao.publicadores import Publicadores
+from modules.local.logger_csv import LoggerCsv
 
 
 class Colaborabot:
@@ -30,11 +29,13 @@ class Colaborabot:
     TOTAL_TENTATIVAS = 10
     STATUS_SUCESSO = 200
 
-    def __init(self, settings):
+    def __init__(self, settings):
         try:
             self.publicadores = Publicadores(settings)
-            self.google_sheet = GoogleSheet(DIA, MES, ANO)
-            self.logger = LoggerCsv(DIA, MES, ANO)
+            self.google_sheet = GoogleSheet(self.DIA, self.MES, self.ANO)
+            self.logger = LoggerCsv(self.DIA, self.MES, self.ANO)
+            
+            self.sites = None
         except Exception as e:
             raise e
 
@@ -52,26 +53,26 @@ class Colaborabot:
         for index, row in self.sites.iterrows():
             url, orgao = row['url'], row['orgao']
 
-            for tentativa in range(TOTAL_TENTATIVAS):
+            for tentativa in range(1, self.TOTAL_TENTATIVAS+1): # exemplo: iniciar de 1 enquanto < 11
                 try:
                     momento = datetime.datetime.now().isoformat(sep=' ', timespec='seconds')
-                    resposta = get(row['url'], timeout=30, headers=headers)
+                    resposta = get(row['url'], timeout=30, headers=self.headers)
                     dados = self.__cria_dados(url=url, portal=orgao, resposta=resposta.status_code)
-                    self.logger.preenche_csv(dador=dados)
-                    if resposta.status_code == STATUS_SUCESSO:
+                    self.logger.preenche_csv(dados=dados)
+                    if resposta.status_code == self.STATUS_SUCESSO:
                         print(f'{momento}; O site {url} funcionou corretamente.')
                         break
                     else:
-                        if tentativa == TOTAL_TENTATIVAS:
+                        if tentativa == self.TOTAL_TENTATIVAS:
                             self.google_sheet.preenche_tab_gs(dados=dados)
-                            self.logger.preenche_csv(dador=dados)
+                            self.logger.preenche_csv(dados=dados)
                             print(f"""{momento}; url: {url}; orgão: {orgao}; resposta: {resposta.status_code}""")
                             self.publicadores.criar_publicacao(url=url, orgao=orgao)
 
                 except (exceptions.ConnectionError, exceptions.Timeout, exceptions.TooManyRedirects) as e:
                     dados = self.__cria_dados(url=url, portal=orgao, resposta=str(e))
                     self.google_sheet.preenche_tab_gs(dados=dados)
-                    self.logger.preenche_csv(dador=dados)
+                    self.logger.preenche_csv(dados=dados)
                     print(f"""{momento}; url: {url}; orgão: {orgao}; resposta:{str(e)}""")
                     self.publicadores.criar_publicacao(url=url, orgao=orgao)
                     break
