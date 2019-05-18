@@ -18,7 +18,7 @@ class Settings:
     access_token_secret = os.environ.get('ACCESS_TOKEN_SECRET')
 
     # [Mastodon API Key]
-    mastodon_active = os.environ.get('MASTODON_ACTIVE')
+    mastodon_active = os.environ.get('DONTE_ACTIVE')
     mastodon_key = os.environ.get('DONTE_USERCRED')
 
     # [Plataforms IDs]
