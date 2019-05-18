@@ -1,5 +1,3 @@
-# from sys import path
-# path.insert(0,'/modules')
 from time import sleep
 from modules.colaborabot import Colaborabot
 from credenciais.settings import Settings
@@ -15,5 +13,5 @@ if __name__ == '__main__':
     while True:
         print("iniciando buscas...")
         colaborabot.busca_disponibilidade_sites()
-        print(f"buscas finalizadas, iniciando novamente em {tempo_busca}...")
+        print(f"buscas finalizadas, iniciando novamente em {tempo_busca} segundos...")
         sleep(tempo_busca)

@@ -13,6 +13,8 @@ class TwitterPublicador:
             
             self.twitter_bot = self.__twitter_auth()
 
+            if self.active == False:
+                print('! twitter desativado.')
         except Exception as e:
             raise e
 
@@ -23,8 +25,6 @@ class TwitterPublicador:
         if self.active == True:
             self.twitter_bot.update_status(publicacao)
             print("tweet postado!")
-        else:
-            print(f'twitter desativado.')
 
     def __twitter_auth(self):
         consumer_key = self.consumer_key

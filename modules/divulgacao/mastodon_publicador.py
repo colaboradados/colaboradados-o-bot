@@ -9,6 +9,8 @@ class MastodonPublicador:
 
             self.mastodon_bot = self.__masto_auth()
 
+            if self.active == False:
+                print('! mastodonte desativado.')
         except Exception as e:
             raise e
 
@@ -29,8 +31,6 @@ class MastodonPublicador:
             if not contem:
                 self.mastodon_bot.toot(publicacao)
                 print("toot postado!")
-        else:
-            print(f'mastodonte desativado')
     
     def __masto_auth(self):
         mastodon = Mastodon(

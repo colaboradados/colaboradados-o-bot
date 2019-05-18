@@ -12,6 +12,9 @@ class GoogleSheet:
 			self.google_api_session = self.__google_api_auth()
 			self.google_spread_client = self.__google_sshet() # antigo google_drive_creds
 			self.planilha_google = self.__plan_gs(dia=dia, mes=mes, ano=ano)
+
+			if self.google_spread_client is None:
+				print("! conexão com google sheet não foi estabelecida")
 		except Exception as e:
 			raise e
 

@@ -10,7 +10,10 @@ class Publicadores:
     
     def __init__(self, settings):
         try:
+            print("iniciando twitter...")
             self.twitter_publicador = TwitterPublicador(settings)
+
+            print("iniciando mastodon...")
             self.mastodon_publicador = MastodonPublicador(settings)
         except Exception as e:
             raise e

@@ -31,8 +31,13 @@ class Colaborabot:
 
     def __init__(self, settings):
         try:
+            print("iniciando publicadores...")
             self.publicadores = Publicadores(settings)
+            
+            print("iniciando google sheet...")
             self.google_sheet = GoogleSheet(self.DIA, self.MES, self.ANO)
+
+            print("iniciando arquivo csv...")
             self.logger = LoggerCsv(self.DIA, self.MES, self.ANO)
             
             self.sites = None
