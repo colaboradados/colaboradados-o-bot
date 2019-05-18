@@ -6,9 +6,13 @@
 O robô que monitora o acesso aos portais de transparência pública governamentais.
 Siga [**@colabora_bot**](https://twitter.com/colabora_bot)
 
-## Instalando o bot
+## Executando o bot
 
-### No Twitter
+Crie o arquivo .env localmente no diretorio "credenciais" como mostra o arquivo `.env.example`.
+Feito isso já é possível executar o bot utilizando
+- `python main.py`
+
+### Configução do Twitter (opcional)
 
 Você deverá obter suas tokens para usar a API do Twitter: 
 
@@ -16,6 +20,9 @@ Você deverá obter suas tokens para usar a API do Twitter:
 2. Em seguida solicite uma developer account [aqui](https://developer.twitter.com/en/apply/user). 
 
 Hoje a requisição pode demorar dias (e há relatos de pessoas que nunca receberam). Seja o mais descritivo possível com relação ao seu projeto e fique atento aos e-mails, pois o Twitter poderá pedir informações adicionais. Também é por email que o Twitter avisará que sua requisição foi aceita. Caso isso aconteça: comemore (uhull!) e crie um app clicando [aqui](https://developer.twitter.com/en/apps). Desta forma você terá acesso as suas tokens que são: consumer_key, consumer_secret, access_token e access_token_secret.
+
+### Configuração do Mastodonte (opcional)
+//TODO
 
 ### Hora da instalação
 
