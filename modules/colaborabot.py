@@ -58,6 +58,7 @@ class Colaborabot:
             for tentativa in range(1, self.TOTAL_TENTATIVAS+1): # exemplo: iniciar de 1 enquanto < 11
                 try:
                     momento = datetime.datetime.now().isoformat(sep=' ', timespec='seconds')
+                    print(f"testando {url}...", end=" ")
                     resposta = get(row['url'], timeout=30, headers=self.headers)
                     dados = self.__cria_dados(url=url, portal=orgao, resposta=resposta.status_code)
                     self.logger.preenche_csv(dados=dados)
