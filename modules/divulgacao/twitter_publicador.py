@@ -3,8 +3,10 @@ import tweepy
 
 class TwitterPublicador:
     
+    twitter_bot = None
+
     def __init__(self, settings):
-        try:
+        if not settings.conexoes_desativadas:
             self.active = settings.twitter_active
             self.consumer_key = settings.consumer_key
             self.consumer_secret = settings.consumer_secret
@@ -15,14 +17,14 @@ class TwitterPublicador:
 
             if self.active == False:
                 print('! twitter desativado.')
-        except Exception as e:
-            raise e
+        else:
+            print('! Conexões desativadas, twitter não será carregado.')
 
     def criar_tweet(self, publicacao):
         """
         Criando o tweet com o status do site recém acessado
         """
-        if self.active == True:
+        if self.twitter_bot is not None:
             self.twitter_bot.update_status(publicacao)
             print("tweet postado!")
 

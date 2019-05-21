@@ -2,17 +2,19 @@ from mastodon import Mastodon
 
 class MastodonPublicador:
 
+    mastodon_key = None
+    mastodon_bot = None
+
     def __init__(self, settings):
-        try:
+        if not settings.conexoes_desativadas:
             self.active = settings.mastodon_active
-            self.mastodon_key = settings.mastodon_key
-
-            self.mastodon_bot = self.__masto_auth()
-
-            if self.active == False:
+            if self.active:
+                self.mastodon_key = settings.mastodon_key
+                self.mastodon_bot = self.__masto_auth()
+            else:
                 print('! mastodonte desativado.')
-        except Exception as e:
-            raise e
+        else:
+            print('! Conexões desativadas, mastodonte não será carregado.')
 
     def criar_toot(self, publicacao, url):
         """
@@ -21,7 +23,7 @@ class MastodonPublicador:
         Feature necessária para não floodar a timeline alheia caso um site fique offline por longos períodos de tempo.
         """
 
-        if self.active == True:
+        if self.mastodon_bot is not None:
             urls_postadas = []
             timeline = self.mastodon_bot.timeline_home(limit=10)
             for toot in timeline:
@@ -33,8 +35,10 @@ class MastodonPublicador:
                 print("toot postado!")
     
     def __masto_auth(self):
-        mastodon = Mastodon(
-            access_token=self.mastodon_key,
-            api_base_url='https://botsin.space'
-        )
-        return mastodon
+        if self.mastodon_key is not None:
+            mastodon = Mastodon(
+                access_token=self.mastodon_key,
+                api_base_url='https://botsin.space'
+            )
+            return mastodon
+        return None

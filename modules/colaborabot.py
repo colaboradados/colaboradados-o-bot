@@ -30,19 +30,16 @@ class Colaborabot:
     STATUS_SUCESSO = 200
 
     def __init__(self, settings):
-        try:
-            print("iniciando publicadores...")
-            self.publicadores = Publicadores(settings)
-            
-            print("iniciando google sheet...")
-            self.google_sheet = GoogleSheet(self.DIA, self.MES, self.ANO)
+        print("iniciando publicadores...")
+        self.publicadores = Publicadores(settings)
+        
+        print("iniciando google sheet...")
+        self.google_sheet = GoogleSheet(settings, self.DIA, self.MES, self.ANO)
 
-            print("iniciando arquivo csv...")
-            self.logger = LoggerCsv(self.DIA, self.MES, self.ANO)
-            
-            self.sites = None
-        except Exception as e:
-            raise e
+        print("iniciando arquivo csv...")
+        self.logger = LoggerCsv(self.DIA, self.MES, self.ANO)
+        
+        self.sites = None
 
     def busca_disponibilidade_sites(self):
         """

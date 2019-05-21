@@ -9,14 +9,11 @@ class Publicadores:
     """
     
     def __init__(self, settings):
-        try:
-            print("iniciando twitter...")
-            self.twitter_publicador = TwitterPublicador(settings)
+        print("iniciando twitter...")
+        self.twitter_publicador = TwitterPublicador(settings)
 
-            print("iniciando mastodon...")
-            self.mastodon_publicador = MastodonPublicador(settings)
-        except Exception as e:
-            raise e
+        print("iniciando mastodon...")
+        self.mastodon_publicador = MastodonPublicador(settings)
     
     def criar_publicacao(self, url, orgao):
         publicacao = self.__lista_frases(url=url, orgao=orgao)

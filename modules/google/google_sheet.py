@@ -7,16 +7,18 @@ from time import sleep
 
 class GoogleSheet: 
 
-	def __init__(self, dia: int, mes: int, ano: int):
-		try:
+	google_spread_client = None
+
+	def __init__(self, settings, dia: int, mes: int, ano: int):
+		if not settings.conexoes_desativadas:
 			self.google_api_session = self.__google_api_auth()
 			self.google_spread_client = self.__google_sshet() # antigo google_drive_creds
 			self.planilha_google = self.__plan_gs(dia=dia, mes=mes, ano=ano)
 
 			if self.google_spread_client is None:
 				print("! conexão com google sheet não foi estabelecida")
-		except Exception as e:
-			raise e
+		else:
+			print('! Conexões desativadas, google sheet não será carregado.')
 
 	def preenche_tab_gs(self, dados):
 		"""
