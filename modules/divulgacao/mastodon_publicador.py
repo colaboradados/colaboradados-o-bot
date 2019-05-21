@@ -1,15 +1,16 @@
 from mastodon import Mastodon
+from credenciais.settings import Settings
 
 class MastodonPublicador:
 
     mastodon_key = None
     mastodon_bot = None
 
-    def __init__(self, settings):
-        if not settings.conexoes_desativadas:
-            self.active = settings.mastodon_active
+    def __init__(self):
+        if not Settings.conexoes_desativadas:
+            self.active = Settings.mastodon_active
             if self.active:
-                self.mastodon_key = settings.mastodon_key
+                self.mastodon_key = Settings.mastodon_key
                 self.mastodon_bot = self.__masto_auth()
             else:
                 print('! mastodonte desativado.')

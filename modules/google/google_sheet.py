@@ -1,6 +1,7 @@
 import gspread
 import json
 
+from credenciais.settings import Settings
 from pathlib import Path
 from authlib.client import AssertionSession
 from time import sleep
@@ -9,8 +10,8 @@ class GoogleSheet:
 
 	google_spread_client = None
 
-	def __init__(self, settings, dia: int, mes: int, ano: int):
-		if not settings.conexoes_desativadas:
+	def __init__(self, dia: int, mes: int, ano: int):
+		if not Settings.conexoes_desativadas:
 			self.google_api_session = self.__google_api_auth()
 			self.google_spread_client = self.__google_sshet() # antigo google_drive_creds
 			self.planilha_google = self.__plan_gs(dia=dia, mes=mes, ano=ano)

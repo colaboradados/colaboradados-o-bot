@@ -1,17 +1,19 @@
 
 import tweepy
 
+from credenciais.settings import Settings
+
 class TwitterPublicador:
     
     twitter_bot = None
 
-    def __init__(self, settings):
-        if not settings.conexoes_desativadas:
-            self.active = settings.twitter_active
-            self.consumer_key = settings.consumer_key
-            self.consumer_secret = settings.consumer_secret
-            self.access_token = settings.access_token
-            self.access_token_secret = settings.access_token_secret
+    def __init__(self):
+        if not Settings.conexoes_desativadas:
+            self.active = Settings.twitter_active
+            self.consumer_key = Settings.consumer_key
+            self.consumer_secret = Settings.consumer_secret
+            self.access_token = Settings.access_token
+            self.access_token_secret = Settings.access_token_secret
             
             self.twitter_bot = self.__twitter_auth()
 

@@ -8,12 +8,12 @@ class Publicadores:
     publicadores é a classe responsavel por publicar em todas as redes de divulgacao. Ex: twitter, mastodon, etc.
     """
     
-    def __init__(self, settings):
+    def __init__(self):
         print("iniciando twitter...")
-        self.twitter_publicador = TwitterPublicador(settings)
+        self.twitter_publicador = TwitterPublicador()
 
         print("iniciando mastodon...")
-        self.mastodon_publicador = MastodonPublicador(settings)
+        self.mastodon_publicador = MastodonPublicador()
     
     def criar_publicacao(self, url, orgao):
         publicacao = self.__lista_frases(url=url, orgao=orgao)

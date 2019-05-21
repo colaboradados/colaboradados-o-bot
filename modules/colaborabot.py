@@ -29,12 +29,12 @@ class Colaborabot:
     TOTAL_TENTATIVAS = 10
     STATUS_SUCESSO = 200
 
-    def __init__(self, settings):
+    def __init__(self):
         print("iniciando publicadores...")
-        self.publicadores = Publicadores(settings)
+        self.publicadores = Publicadores()
         
         print("iniciando google sheet...")
-        self.google_sheet = GoogleSheet(settings, self.DIA, self.MES, self.ANO)
+        self.google_sheet = GoogleSheet(self.DIA, self.MES, self.ANO)
 
         print("iniciando arquivo csv...")
         self.logger = LoggerCsv(self.DIA, self.MES, self.ANO)
