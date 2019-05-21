@@ -10,15 +10,18 @@ class Settings:
     env_path = Path('./credenciais') / '.env'
     load_dotenv(dotenv_path=env_path, override=True)
 
+    # Padrões
+    conexoes_desativadas = os.environ.get('CONEXOES_DESATIVADAS') == 'True'
+
     # [Twitter API Keys]
-    twitter_active = os.environ.get('TWITTER_ACTIVE') == True
+    twitter_active = os.environ.get('TWITTER_ACTIVE') == 'True'
     consumer_key = os.environ.get('CONSUMER_KEY')
     consumer_secret = os.environ.get('CONSUMER_SECRET')
     access_token = os.environ.get('ACCESS_TOKEN')
     access_token_secret = os.environ.get('ACCESS_TOKEN_SECRET')
 
     # [Mastodon API Key]
-    mastodon_active = os.environ.get('DONTE_ACTIVE') == True
+    mastodon_active = os.environ.get('DONTE_ACTIVE') == 'True'
     mastodon_key = os.environ.get('DONTE_USERCRED')
 
     # [Plataforms IDs]
