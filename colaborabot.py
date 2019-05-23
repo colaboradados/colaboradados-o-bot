@@ -5,6 +5,7 @@ import datetime
 import json
 from pathlib import Path
 from time import sleep
+from typing import List, Dict
 
 from requests import get, exceptions
 
@@ -123,14 +124,14 @@ def preenche_tab_gs(planilha, dados):
     planilha.append_row(values=dados)
 
 
-def carregar_dados_site() -> csv.DictReader:
+def carregar_dados_site() -> List[Dict[str, str]]:
     """
     Abrindo a lista de portais da transparência e tratando
     informações que serão tratados como NaN para o pandas.
     """
     with open('dados/lista_portais.csv', 'r', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile)
-        return reader
+        reader = csv.DictReader(csvfile, fieldnames=['url', 'arroba', 'orgao'])
+        return list(reader)
 
 
 def busca_disponibilidade_sites(sites):
@@ -139,7 +140,7 @@ def busca_disponibilidade_sites(sites):
     a sua disponibilidade. Caso o código de status
     seja 200 (OK), então ela está disponível para acesso.
     """
-    for index, row in sites:
+    for row in sites:
         url, orgao = row['url'], row['orgao']
 
         for tentativa in range(TOTAL_TENTATIVAS):
