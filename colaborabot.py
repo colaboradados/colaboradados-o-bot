@@ -1,18 +1,16 @@
 # Importando as libraries
 
-import numpy as np
-import pandas as pd
+import csv
 import datetime
 import json
-import csv
-
 from pathlib import Path
 from time import sleep
-from requests import get, exceptions
-import settings
 
-from divulga import lista_frases, checar_timelines, google_sshet
+from requests import get, exceptions
+
+import settings
 from autenticadores import twitter_auth, google_api_auth, masto_auth
+from divulga import lista_frases, checar_timelines, google_sshet
 
 # Parametros de acesso das urls
 
@@ -118,19 +116,14 @@ def preenche_tab_gs(planilha, dados):
     planilha.append_row(values=dados)
 
 
-def carregar_dados_site():
+def carregar_dados_site() -> csv.DictReader:
     """
     Abrindo a lista de portais da transparência e tratando
     informações que serão tratados como NaN para o pandas.
     """
-    df = pd.read_csv(
-        'dados/lista_portais.csv',
-        header=None,
-        names=['url', 'arroba', 'orgao'],
-        sep=';'
-    )
-    df = df.replace(np.nan, '', regex=True)
-    return df
+    with open('dados/lista_portais.csv', 'r', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        return reader
 
 
 def busca_disponibilidade_sites(sites):
@@ -139,7 +132,7 @@ def busca_disponibilidade_sites(sites):
     a sua disponibilidade. Caso o código de status
     seja 200 (OK), então ela está disponível para acesso.
     """
-    for index, row in sites.iterrows():
+    for index, row in sites:
         url, orgao = row['url'], row['orgao']
 
         for tentativa in range(TOTAL_TENTATIVAS):
