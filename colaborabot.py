@@ -3,6 +3,7 @@
 import csv
 import datetime
 import json
+from itertools import product
 from pathlib import Path
 from time import sleep
 from typing import List, Dict
@@ -95,11 +96,11 @@ def cria_dados(url, portal, resposta):
     resposta recebida e as prepara dentro de uma lista para inserir na tabela.
     """
 
-    momento = str(json.dumps(datetime.datetime.now().isoformat(sep=' ', timespec='seconds'), indent=4, sort_keys=True,
-                             default=str))
-    momento_utc = str(
-        json.dumps(datetime.datetime.utcnow().isoformat(sep=' ', timespec='seconds'), indent=4, sort_keys=True,
-                   default=str))
+    momento = json.dumps(datetime.datetime.now().isoformat(sep=' ', timespec='seconds'), indent=4, sort_keys=True,
+                         default=str)
+    momento_utc = json.dumps(datetime.datetime.utcnow().isoformat(sep=' ', timespec='seconds'), indent=4,
+                             sort_keys=True,
+                             default=str)
     dados = [momento, momento_utc, url, portal, resposta]
     return dados
 
@@ -140,36 +141,33 @@ def busca_disponibilidade_sites(sites):
     a sua disponibilidade. Caso o código de status
     seja 200 (OK), então ela está disponível para acesso.
     """
-    for row in sites:
+    for row, tentativa in product(sites, range(TOTAL_TENTATIVAS)):
         url, orgao = row['url'], row['orgao']
-
-        for tentativa in range(TOTAL_TENTATIVAS):
-            try:
-                momento = datetime.datetime.now().isoformat(sep=' ', timespec='seconds')
-                resposta = get(row['url'], timeout=30, headers=headers)
-                dados = cria_dados(url=url, portal=orgao, resposta=resposta.status_code)
-                preenche_csv(arquivo_logs=arq_log, dados=dados)
-                if resposta.status_code == STATUS_SUCESSO:
-                    print(f'{momento}; O site {url} funcionou corretamente.')
-                    break
-                else:
-                    if tentativa == TOTAL_TENTATIVAS:
-                        if not settings.debug:
-                            preenche_tab_gs(planilha=planilha_google, dados=dados)
-                        preenche_csv(arquivo_logs=arq_log, dados=dados)
-                        print(f"""{momento}; url: {url}; orgão: {orgao}; resposta: {resposta.status_code}""")
-                        if not settings.debug:
-                            checar_timelines(mastodon_handler=mastodon_bot, url=url, orgao=orgao)
-
-            except (exceptions.ConnectionError, exceptions.Timeout, exceptions.TooManyRedirects) as e:
-                dados = cria_dados(url=url, portal=orgao, resposta=str(e))
+        momento = datetime.datetime.now().isoformat(sep=' ', timespec='seconds')
+        try:
+            resposta = get(url, timeout=30, headers=headers)
+            dados = cria_dados(url=url, portal=orgao, resposta=resposta.status_code)
+            preenche_csv(arquivo_logs=arq_log, dados=dados)
+            resposta.raise_for_status()
+            print(f'{momento}; O site {url} funcionou corretamente.')
+            continue
+        except exceptions.HTTPError as e:
+            if tentativa == TOTAL_TENTATIVAS:
+                dados = cria_dados(url=url, portal=orgao, resposta=e.response.status_code)
                 if not settings.debug:
                     preenche_tab_gs(planilha=planilha_google, dados=dados)
-                preenche_csv(arquivo_logs=arq_log, dados=dados)
-                print(f"""{momento}; url: {url}; orgão: {orgao}; resposta:{str(e)}""")
-                if not settings.debug:
                     checar_timelines(mastodon_handler=mastodon_bot, url=url, orgao=orgao)
-                break
+                preenche_csv(arquivo_logs=arq_log, dados=dados)
+                print(f"{momento}; url: {url}; orgão: {orgao}; resposta: {e.response.status_code}")
+
+        except (exceptions.ConnectionError, exceptions.Timeout, exceptions.TooManyRedirects) as e:
+            dados = cria_dados(url=url, portal=orgao, resposta=str(e))
+            if not settings.debug:
+                preenche_tab_gs(planilha=planilha_google, dados=dados)
+                checar_timelines(mastodon_handler=mastodon_bot, url=url, orgao=orgao)
+            preenche_csv(arquivo_logs=arq_log, dados=dados)
+            print(f"{momento}; url: {url}; orgão: {orgao}; resposta:{str(e)}")
+            continue
 
 
 if __name__ == '__main__':
