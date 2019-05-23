@@ -15,7 +15,9 @@ from divulga import lista_frases, checar_timelines, google_sshet
 # Parametros de acesso das urls
 
 headers = {
-'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/39.0.2171.95 Safari/537.36'
+}
 
 TOTAL_TENTATIVAS = 10
 STATUS_SUCESSO = 200
@@ -26,7 +28,7 @@ DIA = datetime.datetime.now().day
 MES = datetime.datetime.now().month
 ANO = datetime.datetime.now().year
 
-data = '{:02d}/{:02d}/{:02d}'.format(DIA, MES, ANO) # 11/04/2019
+data = '{:02d}/{:02d}/{:02d}'.format(DIA, MES, ANO)  # 11/04/2019
 
 
 def criar_tweet(url, orgao):
@@ -54,7 +56,9 @@ def plan_gs(dia, mes, ano):
         lista_planilhas.append(item['name'])
 
     if f'colaborabot-sites-offline-{dia:02d}{mes:02d}{ano:04d}' not in lista_planilhas:
-        planilha = google_drive_creds.create(f'colaborabot-sites-offline-{dia:02d}{mes:02d}{ano:04d}')  # Exemplo de nome final: colaborabot-sites-offline-27022019
+        planilha = google_drive_creds.create(
+            f'colaborabot-sites-offline-{dia:02d}{mes:02d}{ano:04d}'
+        )  # Exemplo de nome final: colaborabot-sites-offline-27022019
         cabecalho = planilha.get_worksheet(index=0)
         cabecalho.insert_row(values=['data_bsb', 'data_utc', 'url', 'orgao', 'cod_resposta'])
 
@@ -90,8 +94,11 @@ def cria_dados(url, portal, resposta):
     resposta recebida e as prepara dentro de uma lista para inserir na tabela.
     """
 
-    momento = str(json.dumps(datetime.datetime.now().isoformat(sep=' ', timespec='seconds'), indent=4, sort_keys=True, default=str))
-    momento_utc = str(json.dumps(datetime.datetime.utcnow().isoformat(sep=' ', timespec='seconds'), indent=4, sort_keys=True, default=str))
+    momento = str(json.dumps(datetime.datetime.now().isoformat(sep=' ', timespec='seconds'), indent=4, sort_keys=True,
+                             default=str))
+    momento_utc = str(
+        json.dumps(datetime.datetime.utcnow().isoformat(sep=' ', timespec='seconds'), indent=4, sort_keys=True,
+                   default=str))
     dados = [momento, momento_utc, url, portal, resposta]
     return dados
 
