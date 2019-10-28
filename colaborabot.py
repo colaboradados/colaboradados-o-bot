@@ -23,6 +23,7 @@ headers = {
 
 TOTAL_TENTATIVAS = 10
 STATUS_SUCESSO = 200
+TEMPO_VERIFICACAO = 300
 
 # Guardando informações de hora e data da máquina
 
@@ -38,6 +39,22 @@ def criar_tweet(url, orgao):
     Criando o tweet com o status do site recém acessado
     """
     twitter_bot.update_status(lista_frases(url=url, orgao=orgao))
+
+def aviso_site_tweet(url, orgao):
+    """
+    Envia tweet avisando que o site voltou ao ar
+    """
+    site_no_ar = False
+    aviso = f"🤖 O portal com dados públicos {url} do órgão {orgao} voltou ao ar"
+
+    for tentativa in range(TOTAL_TENTATIVAS + 1):
+        resposta = get(url, timeout=30, headers=headers)
+        if resposta == STATUS_SUCESSO:
+            site_no_ar = True
+            break
+        sleep(TEMPO_VERIFICACAO)
+
+    twitter_bot.update_status(aviso) if site_no_ar else criar_tweet(url, orgao)
 
 
 def plan_gs(dia, mes, ano):
