@@ -48,11 +48,14 @@ def aviso_site_tweet(url, orgao):
     aviso = f"🤖 O portal com dados públicos {url} do órgão {orgao} voltou ao ar"
 
     for tentativa in range(TOTAL_TENTATIVAS + 1):
-        resposta = get(url, timeout=30, headers=headers)
-        if resposta == STATUS_SUCESSO:
-            site_no_ar = True
-            break
-        sleep(TEMPO_VERIFICACAO)
+        try:
+            resposta = get(url, timeout=30, headers=headers)
+            if resposta.status_code == STATUS_SUCESSO:
+                site_no_ar = True
+                break
+            sleep(TEMPO_VERIFICACAO)
+        except(exceptions.ConnectionError, exceptions.Timeout, exceptions.TooManyRedirects):
+            print(f"Erro de conexão com {url} do {orgao}")
 
     twitter_bot.update_status(aviso) if site_no_ar else criar_tweet(url, orgao)
 
