@@ -40,6 +40,9 @@ class Twitter(BracoBase):
 
     def get_timeline(self, limite=10):
         pass
+        # Ver http://docs.tweepy.org/en/latest/api.html#API.home_timeline
+        # ou http://docs.tweepy.org/en/latest/code_snippet.html#pagination
+        #return self.bot.home_timeline(count=limite)
 
 
 class Mastodon(BracoBase):
@@ -53,7 +56,7 @@ class Mastodon(BracoBase):
             self.bot.toot(mensagem)
 
     def get_timeline(self, limite=10):
-        return self.bot.timeline_home(limit=10)
+        return self.bot.timeline_home(limit=limite)
 
     def contem(mensagem):
         timeline = self.bot.get_timeline_home(limit=10)
@@ -63,7 +66,6 @@ class Mastodon(BracoBase):
 
 class GoogleSheet(BracoBase):
     pass
-
 
 class Telegram(BracoBase):
     pass
