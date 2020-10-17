@@ -36,14 +36,6 @@ ANO = datetime.datetime.now().year
 
 data = "{:02d}/{:02d}/{:02d}".format(DIA, MES, ANO)  # 11/04/2019
 
-# TODO remover
-def criar_tweet(url, orgao):
-    """
-    Criando o tweet com o status do site recém acessado
-    """
-    twitter_bot.update_status(lista_frases(url=url, orgao=orgao))
-
-
 def plan_gs(dia, mes, ano):
     """
     Cria planilha no Google Drive, envia por e-mail e preenche o cabeçalho
