@@ -4,24 +4,61 @@ import settings
 import tweepy
 import json
 
+"""
+Braco
+    inicializacao (autenticação)
+    atualizar linha do tempo
+    checa linha do tempo
+"""
 
-def masto_auth():
-    mastodon = Mastodon(access_token=settings.mastodon_key, api_base_url="https://botsin.space")
-    return mastodon
+class BracoBase(): # classe abstrata base
+    pass
 
 
-def twitter_auth():
-    consumer_key = settings.consumer_key
-    consumer_secret = settings.consumer_secret
-    access_token = settings.access_token
-    access_token_secret = settings.access_token_secret
+class Twitter(BracoBase):
+    def __init__(self):
+        consumer_key = settings.consumer_key
+        consumer_secret = settings.consumer_secret
+        access_token = settings.access_token
+        access_token_secret = settings.access_token_secret
 
-    # App no Twitter
+        # App no Twitter
+        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+        auth.set_access_token(access_token, access_token_secret)
+        self.bot = tweepy.API(auth)
 
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    bot = tweepy.API(auth)
-    return bot
+    def update(self, mensagem):
+        self.bot.update_status(status=mensagem)
+
+    def get_timeline(self, limite=10):
+        pass
+
+
+class Mastodon(BracoBase):
+    def __init__(self):
+        self.bot = Mastodon(access_token=settings.mastodon_key, api_base_url="https://botsin.space")
+
+    def update(self, checa_timeline=False, mensagem):
+        if checa_timeline and self.contem(mensagem):
+            self.bot.toot(mensagem)
+        else:
+            self.bot.toot(mensagem)
+
+    def get_timeline(self, limite=10):
+        return self.bot.timeline_home(limit=10)
+
+    def contem(mensagem):
+        timeline = self.bot.get_timeline_home(limit=10)
+        urls_postadas = [toot["content"] for toot in timeline]
+        return any(url in toot for toot in urls_postadas)
+
+
+class GoogleSheet(BracoBase):
+    pass
+
+
+class Telegram(BracoBase):
+    pass
 
 
 def google_api_auth(arqv_json="credenciais/colaborabot-gAPI.json", subject=None):
@@ -52,7 +89,7 @@ def google_api_auth(arqv_json="credenciais/colaborabot-gAPI.json", subject=None)
         header=header,
     )
 
-
+# TODO remover essa funcao
 def id_mastodon():
     id_perfil = settings.mastodon_profile_id
     return id_perfil

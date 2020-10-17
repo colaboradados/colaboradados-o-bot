@@ -36,6 +36,7 @@ ANO = datetime.datetime.now().year
 
 data = "{:02d}/{:02d}/{:02d}".format(DIA, MES, ANO)  # 11/04/2019
 
+# TODO remover
 def criar_tweet(url, orgao):
     """
     Criando o tweet com o status do site recém acessado
@@ -161,12 +162,10 @@ def busca_disponibilidade_sites(sites):
                         while not planilha_preenchida:
                             planilha_preenchida = preenche_tab_gs(planilha=planilha_google, dados=dados)
                         resultados.append(dados)
-                        checar_timelines(
-                            twitter_hander=twitter_bot,
-                            mastodon_handler=mastodon_bot,
-                            url=url,
-                            orgao=orgao,
-                        )
+                        
+                        for bots in settings.bracos:
+                            bot = bots()
+                            bot.update(checa_timeline=True, mensagem=lista_frases(url=url, orgao=orgao))
 
             except requests.exceptions.RequestException as e:
                 print("Tentativa {}:".format(tentativa + 1))
@@ -188,8 +187,10 @@ def busca_disponibilidade_sites(sites):
 
 if __name__ == "__main__":
     if not settings.debug:
+        """
         mastodon_bot = masto_auth()
         twitter_bot = twitter_auth()
+        """
         google_creds = google_api_auth()
         google_drive_creds = google_sshet()
         planilha_google = plan_gs(dia=DIA, mes=MES, ano=ANO)

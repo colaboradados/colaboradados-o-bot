@@ -3,7 +3,7 @@ from autenticadores import google_api_auth
 from random import choice
 import gspread
 
-
+# TODO remover (?)
 def google_sshet():
     """
     Função simples para retornar um objeto capaz de manipular as planilhas do Google Sheets.
@@ -12,7 +12,7 @@ def google_sshet():
     ggle_cred = gspread.Client(None, session)
     return ggle_cred
 
-
+# TODO renomear esta funcao para cria_frase
 def lista_frases(url, orgao):
     com_orgao = [
         f"🤖 O portal com dados públicos {url} do órgão {orgao} parece não estar funcionando. Poderia me ajudar a checar?",
@@ -29,7 +29,7 @@ def lista_frases(url, orgao):
     msg_orgao = choice(com_orgao)
     return msg_orgao
 
-
+# TODO remover
 def checar_timelines(twitter_hander, mastodon_handler, url, orgao):
     """
     Recupera os 10 últimos toots/tweets da conta do Mastodon/Twitter.
@@ -39,6 +39,7 @@ def checar_timelines(twitter_hander, mastodon_handler, url, orgao):
 
     mastodon_bot = mastodon_handler
     twitter_bot = twitter_hander
+    
     timeline = mastodon_bot.timeline_home(limit=10)
     urls_postadas = [toot["content"] for toot in timeline]
     contem = any(url in toot for toot in urls_postadas)

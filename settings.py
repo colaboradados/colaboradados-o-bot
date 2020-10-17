@@ -13,3 +13,9 @@ mastodon_key = config("DONTE_USERCRED")
 
 # [Plataforms IDs]
 mastodon_profile_id = config("ID_CONTA_MASTODON")
+
+# [Bracos do Colabora Bot]
+import autenticadores
+bracos = (autenticadores.Twitter, 
+          autenticadores.Mastodon,
+)
