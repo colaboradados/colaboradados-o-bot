@@ -97,7 +97,3 @@ def google_api_auth(arqv_json="credenciais/colaborabot-gAPI.json", subject=None)
         header=header,
     )
 
-# TODO remover essa funcao
-def id_mastodon():
-    id_perfil = settings.mastodon_profile_id
-    return id_perfil
