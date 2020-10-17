@@ -9,7 +9,7 @@ from pathlib import Path
 from time import sleep
 import settings
 
-from divulga import lista_frases, checar_timelines, google_sshet
+from divulga import cria_frase, checar_timelines, google_sshet
 from autenticadores import twitter_auth, google_api_auth, masto_auth
 from gspread.exceptions import APIError
 
@@ -157,7 +157,7 @@ def busca_disponibilidade_sites(sites):
                         
                         for bots in settings.bracos:
                             bot = bots()
-                            bot.update(checa_timeline=True, mensagem=lista_frases(url=url, orgao=orgao))
+                            bot.update(checa_timeline=True, mensagem=cria_frase(url=url, orgao=orgao))
 
             except requests.exceptions.RequestException as e:
                 print("Tentativa {}:".format(tentativa + 1))

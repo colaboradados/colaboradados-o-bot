@@ -12,8 +12,7 @@ def google_sshet():
     ggle_cred = gspread.Client(None, session)
     return ggle_cred
 
-# TODO renomear esta funcao para cria_frase
-def lista_frases(url, orgao):
+def cria_frase(url, orgao):
     com_orgao = [
         f"🤖 O portal com dados públicos {url} do órgão {orgao} parece não estar funcionando. Poderia me ajudar a checar?",
         f"🤖 Hum, parece que o site {url}, mantido pelo órgão {orgao}, está apresentando erro. Poderia dar uma olhadinha?",
