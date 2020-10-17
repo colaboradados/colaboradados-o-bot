@@ -1,8 +1,11 @@
+from abc import ABC, abstractmethod
+
 from authlib.client import AssertionSession
 from mastodon import Mastodon
 import settings
 import tweepy
 import json
+
 
 """
 Braco
@@ -11,9 +14,14 @@ Braco
     checa linha do tempo
 """
 
-class BracoBase(): # classe abstrata base
-    pass
+class BracoBase(ABC): # classe abstrata base
+    @abstractmethod
+    def update(self, mensagem, checa_timeline=False):
+        pass
 
+    @abstractmethod
+    def get_timeline(self, limite=10):
+        pass
 
 class Twitter(BracoBase):
     def __init__(self):
@@ -27,7 +35,7 @@ class Twitter(BracoBase):
         auth.set_access_token(access_token, access_token_secret)
         self.bot = tweepy.API(auth)
 
-    def update(self, mensagem):
+    def update(self, mensagem, checa_timeline=False):
         self.bot.update_status(status=mensagem)
 
     def get_timeline(self, limite=10):
@@ -38,7 +46,7 @@ class Mastodon(BracoBase):
     def __init__(self):
         self.bot = Mastodon(access_token=settings.mastodon_key, api_base_url="https://botsin.space")
 
-    def update(self, checa_timeline=False, mensagem):
+    def update(self, mensagem, checa_timeline=False):
         if checa_timeline and self.contem(mensagem):
             self.bot.toot(mensagem)
         else:
