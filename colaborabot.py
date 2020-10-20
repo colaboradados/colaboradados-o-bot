@@ -10,7 +10,7 @@ from time import sleep
 import settings
 
 from divulga import cria_frase, checar_timelines, google_sshet
-from autenticadores import twitter_auth, google_api_auth, masto_auth
+from autenticadores import google_api_auth
 from gspread.exceptions import APIError
 
 http.client._MAXHEADERS = 1000
@@ -155,8 +155,8 @@ def busca_disponibilidade_sites(sites):
                             planilha_preenchida = preenche_tab_gs(planilha=planilha_google, dados=dados)
                         resultados.append(dados)
                         
-                        for bots in settings.bracos:
-                            bot = bots()
+                        global bots_ativos
+                        for bot in bots_ativos:
                             bot.update(checa_timeline=True, mensagem=cria_frase(url=url, orgao=orgao))
 
             except requests.exceptions.RequestException as e:
@@ -179,13 +179,13 @@ def busca_disponibilidade_sites(sites):
 
 if __name__ == "__main__":
     if not settings.debug:
-        """
-        mastodon_bot = masto_auth()
-        twitter_bot = twitter_auth()
-        """
-        google_creds = google_api_auth()
-        google_drive_creds = google_sshet()
-        planilha_google = plan_gs(dia=DIA, mes=MES, ano=ANO)
+        global bots_ativos
+        bots_ativos = (bot() for bot in settings.bracos)
+
+        #google_creds = google_api_auth()
+        #google_drive
+        #google_drive_creds = google_sshet()
+        #planilha_google = plan_gs(dia=DIA, mes=MES, ano=ANO)
     sites = carregar_dados_site()
     while True:
         busca_disponibilidade_sites(sites)

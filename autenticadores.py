@@ -59,13 +59,90 @@ class Mastodon(BracoBase):
         return self.bot.timeline_home(limit=limite)
 
     def contem(mensagem):
-        timeline = self.bot.get_timeline_home(limit=10)
+        timeline = self.get_timeline_home(limit=10)
         urls_postadas = [toot["content"] for toot in timeline]
         return any(url in toot for toot in urls_postadas)
 
 
 class GoogleSheet(BracoBase):
-    pass
+    def load_conf(self):
+        with open(settings.google_confs, "r") as f:
+            conf = json.load(f)
+
+        token_url = conf["token_uri"]
+        issuer = conf["client_email"]
+        key = conf["private_key"]
+        key_id = conf.get("private_key_id")
+
+        header = {"alg": "RS256"}
+        scopes = ["https://spreadsheets.google.com/feeds",
+                    "https://www.googleapis.com/auth/drive"]
+
+        if key_id:
+            header["kid"] = key_id
+
+        # Google puts scope in payload
+        claims = {"scope": " ".join(scopes)}
+        return AssertionSession(
+            grant_type=AssertionSession.JWT_BEARER_GRANT_TYPE,
+            token_url=token_url,
+            issuer=issuer,
+            audience=token_url,
+            claims=claims,
+            subject=subject,
+            key=key,
+            header=header,
+        )
+
+    def plan_gs(self):
+        """
+        Cria planilha no Google Drive, envia por e-mail e preenche o cabeçalho
+        (data e hora no fuso horário de Brasília, data e hora no UTC, url afetada,
+        órgão responsável e código de resposta do acesso).
+        A planilha criada possui as permissões de leitura para qualquer pessoa com
+        o link, porém somente a conta da API do bot (que não é a mesma conta usada
+        pela equipe) consegue alterar os dados contidos nela.
+
+        Também é acessado uma planilha índice
+        (docs.google.com/spreadsheets/d/1kIwjn2K0XKAOWZLVRBx9lOU5D4TTUanvmhzmdx7bh0w)
+        e incluído a planilha de logs nela, na segunda tabela.
+        """
+
+        todas_planilhas = google_drive_creds.list_spreadsheet_files()
+        lista_planilhas = [item["name"] for item in todas_planilhas]
+
+        offline_titulo = f"colaborabot-sites-offline-{dia:02d}{mes:02d}{ano:04d}"
+
+        if offline_titulo not in lista_planilhas:
+            # Exemplo de nome final: colaborabot-sites-offline-27022019
+            planilha = google_drive_creds.create(offline_titulo)
+            cabecalho = planilha.get_worksheet(index=0)
+            cabecalho.insert_row(values=["data_bsb", "data_utc", "url", "orgao", "cod_resposta"])
+
+            plan_indice = google_drive_creds.open_by_key("1kIwjn2K0XKAOWZLVRBx9lOU5D4TTUanvmhzmdx7bh0w")
+            tab_indice = plan_indice.get_worksheet(index=1)
+            endereco = f"docs.google.com/spreadsheets/d/{planilha.id}/"
+            tab_indice.append_row(values=[data, endereco])
+
+        else:
+            planilha = google_drive_creds.open(title=offline_titulo)
+
+        sleep(5)
+        planilha.share(None, perm_type="anyone", role="reader")
+        print(f"https://docs.google.com/spreadsheets/d/{planilha.id}\n")
+        return planilha
+
+    def __init__(self):
+        self.conf = load_confs()
+        self.indice = plan_gs()
+
+    def update(self, mensagem, checa_timeline=False):
+        pass
+        ##colaborabot.plan_gs...
+
+    def get_timeline(self, limite=10):
+        pass
+
 
 class Telegram(BracoBase):
     pass
