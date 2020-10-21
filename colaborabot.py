@@ -9,9 +9,13 @@ from pathlib import Path
 from time import sleep
 import settings
 
-from divulga import cria_frase, checar_timelines, google_sshet
+from collections import namedtuple
+
+from divulga import checar_timelines, google_sshet
 from autenticadores import google_api_auth
 from gspread.exceptions import APIError
+
+from utils import cria_frase
 
 http.client._MAXHEADERS = 1000
 
@@ -73,18 +77,6 @@ def plan_gs(dia, mes, ano):
     planilha.share(None, perm_type="anyone", role="reader")
     print(f"https://docs.google.com/spreadsheets/d/{planilha.id}\n")
     return planilha
-
-
-def cria_dados(url, portal, resposta):
-    """
-    Captura as informações de hora e data da máquina, endereço da página e
-    resposta recebida e as prepara dentro de uma lista para inserir na tabela.
-    """
-    formato_data = "%Y-%m-%d %H:%m:%S"
-    momento = str(datetime.datetime.now().strftime(formato_data))
-    momento_utc = datetime.datetime.utcnow().strftime(formato_data)
-    dados = [momento, momento_utc, url, portal, resposta]
-    return dados
 
 
 def preenche_csv(resultados):
