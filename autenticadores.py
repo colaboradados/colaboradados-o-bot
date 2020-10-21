@@ -158,6 +158,30 @@ class GoogleSheet(BracoBase):
 class Telegram(BracoBase):
     pass
 
+class CSV(BracoBase):
+    def __init__(self):
+        pasta_logs = Path("logs")
+        if not pasta_logs.exists():
+            pasta_logs.mkdir()
+
+        DIA = datetime.datetime.now().day
+        MES = datetime.datetime.now().month
+        ANO = datetime.datetime.now().year
+
+        self.arq_log = pasta_logs / f"colaborabot-log-{ANO}-{MES}-{DIA}.csv"
+        cabecalho = ["data_bsb", "data_utc", "url", "orgao", "cod_resposta"]
+        with open(self.arq_log, "w") as csvfile:
+            csv_writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+            csv_writer.writerow(cabecalho)
+
+    def update(self, dados, checa_timeline=False):
+        with open(self.arq_log, "a") as csvfile:
+            csv_writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+            mensagem = cria_dados(dados.url, dados.orgao, dados.resposta)
+            csv_writer.writerow(mensagem)
+
+    def get_timeline(self, limite=10):
+        pass
 
 def google_api_auth(arqv_json="credenciais/colaborabot-gAPI.json", subject=None):
     with open(arqv_json, "r") as f:
