@@ -6,6 +6,11 @@ import settings
 import tweepy
 import json
 
+from pathlib import Path
+import datetime
+import csv
+
+from utils import cria_frase, cria_dados
 
 """
 Braco
@@ -16,7 +21,7 @@ Braco
 
 class BracoBase(ABC): # classe abstrata base
     @abstractmethod
-    def update(self, mensagem, checa_timeline=False):
+    def update(self, dados, checa_timeline=False):
         pass
 
     @abstractmethod
@@ -35,7 +40,10 @@ class Twitter(BracoBase):
         auth.set_access_token(access_token, access_token_secret)
         self.bot = tweepy.API(auth)
 
-    def update(self, mensagem, checa_timeline=False):
+    def update(self, dados, checa_timeline=False):
+        mensagem = cria_frase(url=dados["url"],
+                              orgao=dados["orgao"],
+                              resposta=["status_code"])
         self.bot.update_status(status=mensagem)
 
     def get_timeline(self, limite=10):
@@ -49,7 +57,10 @@ class Mastodon(BracoBase):
     def __init__(self):
         self.bot = Mastodon(access_token=settings.mastodon_key, api_base_url="https://botsin.space")
 
-    def update(self, mensagem, checa_timeline=False):
+    def update(self, dados, checa_timeline=False):
+        mensagem = cria_frase(url=dados["url"],
+                              orgao=dados["orgao"],
+                              resposta=["status_code"])
         if checa_timeline and self.contem(mensagem):
             self.bot.toot(mensagem)
         else:
