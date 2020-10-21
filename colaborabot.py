@@ -164,20 +164,66 @@ def busca_disponibilidade_sites(sites):
                 else:
                     with open("bases-com-excecoes.txt", "a", encoding="utf-8") as excecoes:
                         excecoes.write("{} - {} - {}\n".format(orgao, url, e))
+
             break
 
     preenche_csv(resultados)
 
+def filtra_inativos(sites):
+    """
+    Percorrendo a lista de sites para verificar
+    a sua disponibilidade. Caso o código de status
+    seja 200 (OK), então ela está disponível para acesso.
+    Se não estiver disponível pra acessar, retorna o site.
+    """
+    
+    last_exception = None
+    
+    for row in sites:
+        url, orgao = row.url, row.orgao
+        for tentativa in range(TOTAL_TENTATIVAS):
+            try:
+                resposta = requests.get(url,
+                                        headers=headers,
+                                        timeout=60,
+                                        verify=not(last_exception == "SSLError"))
+                status_code = resposta.status_code
+                # TODO ver esse print
+                print("{} - {} - {}".format(orgao, url, status_code))
+                last_exception = ""
+
+                if status_code != STATUS_SUCESSO:
+                    Site = namedtuple("Site", "orgao url resposta")
+                    site = Site(row.orgao, row.url, status_code)
+                    yield site
+
+                break
+            except requests.exceptions.RequestException as e:
+                # TODO rever isso
+                print("Tentativa {}:".format(tentativa + 1))
+                print(e)
+                if e.__class__.__name__ == "SSLError":
+                    last_exception = e.__class__.__name__
+                    with open("bases-sem-certificados.txt", "a", encoding="utf-8") as no_certification:
+                        no_certification.write("{} - {} - {}\n".format(orgao, url, e))
+                    continue
+                elif tentativa < TOTAL_TENTATIVAS - 1:
+                    continue
+                else: # TODO rever esses excecoes e colocar alguns como sites inativos
+                    with open("bases-com-excecoes.txt", "a", encoding="utf-8") as excecoes:
+                        excecoes.write("{} - {} - {}\n".format(orgao, url, e))
+                    break
 
 if __name__ == "__main__":
+    # se os bracos foram habilitados no settings,
+    # talvez nao seja mais necessario esse if debug...
     if not settings.debug:
-        global bots_ativos
-        bots_ativos = (bot() for bot in settings.bracos)
+        pass
 
-        #google_creds = google_api_auth()
-        #google_drive
-        #google_drive_creds = google_sshet()
-        #planilha_google = plan_gs(dia=DIA, mes=MES, ano=ANO)
     sites = carregar_dados_site()
+    bots_ativos = tuple(bot() for bot in settings.bracos)
     while True:
-        busca_disponibilidade_sites(sites)
+        for site in filtra_inativos(sites):
+            for bot in bots_ativos:
+                bot.update(checa_timeline=True, dados=site)
+
