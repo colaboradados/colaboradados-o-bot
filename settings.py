@@ -19,8 +19,11 @@ google_api_conf = "credenciais/colaborabot-gAPI.json"
 
 # [Bracos do Colabora Bot]
 import autenticadores
-bracos = (autenticadores.Twitter, 
-          autenticadores.Mastodon,
-          autenticadores.GoogleSheet
+bracos = (
+#          autenticadores.Twitter, 
+#          autenticadores.Mastodon,
+#          autenticadores.GoogleSheet,
+#          autenticadores.Telegram,
+          autenticadores.CSV,
 )
 
