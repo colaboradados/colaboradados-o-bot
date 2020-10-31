@@ -21,13 +21,30 @@ Braco
 """
 
 class BracoBase(ABC): # classe abstrata base
-    @abstractmethod
     def update(self, dados, checa_timeline=False):
+        def enviar():
+            mensagem = cria_frase(url=dados.url,
+                    orgao=dados.orgao)
+            self._update_real(mensagem)
+
+        if checa_timeline:
+            if not self._contem(dados.url):
+                enviar()
+        else:
+            enviar()
+
+    @abstractmethod
+    def _update_real(self, mensagem):
         pass
 
     @abstractmethod
     def get_timeline(self, limite=10):
         pass
+
+    @abstractmethod
+    def _contem(self, url):
+        pass
+
 
 class Twitter(BracoBase):
     def __init__(self):
@@ -41,10 +58,7 @@ class Twitter(BracoBase):
         auth.set_access_token(access_token, access_token_secret)
         self.bot = tweepy.API(auth)
 
-    def update(self, dados, checa_timeline=False):
-        mensagem = cria_frase(url=dados["url"],
-                              orgao=dados["orgao"],
-                              resposta=["status_code"])
+    def _update_real(self, mensagem):
         self.bot.update_status(status=mensagem)
 
     def get_timeline(self, limite=10):
@@ -53,24 +67,23 @@ class Twitter(BracoBase):
         # ou http://docs.tweepy.org/en/latest/code_snippet.html#pagination
         #return self.bot.home_timeline(count=limite)
 
+    # escrever...
+    def _contem(self, mensagem):
+        return False
+
 
 class Mastodon(BracoBase):
     def __init__(self):
         self.bot = mastodon.Mastodon(access_token=settings.mastodon_key,
                                      api_base_url="https://botsin.space")
 
-    def update(self, dados, checa_timeline=False):
-        mensagem = cria_frase(url=dados.url,
-                              orgao=dados.orgao)
-        if checa_timeline and self.contem(mensagem):
-            self.bot.toot(mensagem)
-        else:
-            self.bot.toot(mensagem)
+    def _update_real(self, mensagem):
+        self.bot.toot(mensagem)
 
     def get_timeline(self, limite=10):
         return self.bot.timeline_home(limit=limite)
 
-    def contem(self, mensagem):
+    def _contem(self, url):
         timeline = self.get_timeline(limite=10)
         urls_postadas = [toot["content"] for toot in timeline]
         return any(url in toot for toot in urls_postadas)
@@ -175,13 +188,19 @@ class CSV(BracoBase):
             csv_writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
             csv_writer.writerow(cabecalho)
 
-    def update(self, dados, checa_timeline=False):
+    def _update_real(self, mensagem):
         with open(self.arq_log, "a") as csvfile:
             csv_writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-            mensagem = cria_dados(dados.url, dados.orgao, dados.resposta)
             csv_writer.writerow(mensagem)
 
+    def update(self, dados, checa_timeline=False):
+        mensagem = cria_dados(dados.url, dados.orgao, dados.resposta)
+        self._update_real(mensagem)
+
     def get_timeline(self, limite=10):
+        pass
+
+    def _contem(self, url):
         pass
 
 def google_api_auth(arqv_json="credenciais/colaborabot-gAPI.json", subject=None):
