@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 
 from authlib.client import AssertionSession
-from mastodon import Mastodon
+
+import mastodon 
 import settings
 import tweepy
 import json
@@ -55,12 +56,12 @@ class Twitter(BracoBase):
 
 class Mastodon(BracoBase):
     def __init__(self):
-        self.bot = Mastodon(access_token=settings.mastodon_key, api_base_url="https://botsin.space")
+        self.bot = mastodon.Mastodon(access_token=settings.mastodon_key,
+                                     api_base_url="https://botsin.space")
 
     def update(self, dados, checa_timeline=False):
-        mensagem = cria_frase(url=dados["url"],
-                              orgao=dados["orgao"],
-                              resposta=["status_code"])
+        mensagem = cria_frase(url=dados.url,
+                              orgao=dados.orgao)
         if checa_timeline and self.contem(mensagem):
             self.bot.toot(mensagem)
         else:
@@ -69,8 +70,8 @@ class Mastodon(BracoBase):
     def get_timeline(self, limite=10):
         return self.bot.timeline_home(limit=limite)
 
-    def contem(mensagem):
-        timeline = self.get_timeline_home(limit=10)
+    def contem(self, mensagem):
+        timeline = self.get_timeline(limite=10)
         urls_postadas = [toot["content"] for toot in timeline]
         return any(url in toot for toot in urls_postadas)
 
